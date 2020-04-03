@@ -1,0 +1,8 @@
+FROM node:10
+WORKDIR /app
+CMD echo "Build 1"
+COPY package.json /app
+RUN npm install
+COPY . /app
+CMD node server.js
+EXPOSE 4000
