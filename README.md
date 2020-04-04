@@ -1,5 +1,5 @@
 # Documentation of this project
-Dockerized Node-App as Open ID Connect Relying Party with Lemonldap as Open ID Connect Provider.
+Dockerized Node-App as Open ID Connect Relying Party with Lemonldap as Open ID Connect Provider using Authorization Code Flow.
 It is not meant to be used in production. It is an example which demonstrates, how one can connect a Node-JS express app with a lemonldap server using Open-ID-Connect.
 
 ## Installation und Start
