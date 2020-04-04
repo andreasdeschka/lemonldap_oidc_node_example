@@ -1,11 +1,17 @@
-# Documentation of this project
-Dockerized Node-App as Open ID Connect Relying Party with Lemonldap as Open ID Connect Provider using Authorization Code Flow.
-It is not meant to be used in production. It is an example which demonstrates, how one can connect a Node-JS express app with a lemonldap server using Open-ID-Connect.
+# Dockerized example for authentication in node express app with LemonLDAP server using node open-id client
+Setup: An [express](https://expressjs.com/) node app is the OpenID Connect Relying Party (Client). A [Lemonldap](https://lemonldap-ng.org/start) server is the [Open ID Connect] (https://openid.net/connect/faq/) provider. The protocol is  [Authorization Code Flow](https://auth0.com/docs/flows/concepts/auth-code). The epress app uses the OpenID Connect certified [open-id client](https://github.com/panva/node-openid-client) package.
+It is not meant to be used in production. It is only an example for demonstration and testing. 
 
 ## Installation und Start
     git clone https://github.com/andreasdeschka/lemonldap_oidc_node_example
     cd lemonldap_oidc_node_example
     docker-compose up -d
+    
+## Debugging
+
+    docker-compose logs -t lemonldap
+    
+    docker-compose logs -t lemonldap    
 
 ## Usage 
 
