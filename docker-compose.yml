@@ -7,10 +7,14 @@ services:
       - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
       - ./certs/:/etc/ssl/:ro
     ports:
+      # changing of the port here is not enough
+      # also change it here:
+      #   * in the file ./node_oidc_client/server.js 
+      #   * in the file ./haproxy.cfg
+      #   * in the lemonldap manager: General Parameters - Portal - URL 
       - 3001:3001
-      - 3081:3081
     networks:
-      testing_net:
+      lemonldap_oidc_node_example_net:
           ipv4_address: 172.28.1.1
 
   lemonldap:
@@ -20,13 +24,15 @@ services:
     environment:
     - SSODOMAIN=lemonldap.localhost
     - LOGLEVEL=debug
-    - PORTAL_HOSTNAME=myportal.lemonldap.localhost 
-    - MANAGER_HOSTNAME=mymanager.lemonldap.localhost 
-    - HANDLER_HOSTNAME=myhandler.lemonldap.localhost 
+    # change of host names makes only sense, before the first configuration file has been created, later go to 'Virtual Hosts' in manager
+    # these values are only left here in case someone wants to delete all configuration files and setup a clean lemonldap configuration
+    - PORTAL_HOSTNAME=myportal.lemonldap.localhost  
+    - MANAGER_HOSTNAME=mymanager.lemonldap.localhost  
+    - HANDLER_HOSTNAME=myhandler.lemonldap.localhost  
     - TEST1_HOSTNAME=mytest1.lemonldap.localhost 
     - TEST2_HOSTNAME=mytest2.lemonldap.localhost
     networks:
-      testing_net:
+      lemonldap_oidc_node_example_net:
           ipv4_address: 172.28.1.2
 
   oidc_node_client:
@@ -36,15 +42,19 @@ services:
     volumes:
       - ./node_oidc_client/server.js:/app/server.js:ro    
     ports:
+      # changing of the port here is not enough
+      # also change it in the lemonldap manager under:
+      #   * OpenID Connect Relying Parties - (client name) - Options - Allowed redirection addresses for login 
+      #   * General Parameters - Advanced Parameters - Security - Content Security Policy - Form Destinations
       - 4001:4001
     extra_hosts:
       - "myportal.lemonldap.localhost:172.28.1.1"
     networks:
-      testing_net:
+      lemonldap_oidc_node_example_net:
           ipv4_address: 172.28.1.3
 
 networks:
-  testing_net:
+  lemonldap_oidc_node_example_net:
       ipam:
           driver: default
           config:

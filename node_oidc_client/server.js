@@ -11,10 +11,11 @@ server.use(session({
   keys: ['key1', 'key2']
 }));
 
+// for use with a self signed certificate
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
-console.log('123');
 
-Issuer.discover('https://myportal.lemonldap.localhost:3001/.well-known/openid-configuration') // => Promise
+
+Issuer.discover('https://myportal.lemonldap.localhost:3001/.well-known/openid-configuration')
   .then(function (lemonldapIssuer) {
     console.log('Discovered issuer %s %O', lemonldapIssuer.issuer, lemonldapIssuer.metadata);
     return lemonldapIssuer;
@@ -25,9 +26,8 @@ Issuer.discover('https://myportal.lemonldap.localhost:3001/.well-known/openid-co
       client_secret: 'mqCPBn7zcwjvaR',
       redirect_uris: ['http://localhost:'+PORT+'/redirect_oidc'],
       response_types: ['code'],
-      id_token_signed_response_alg: "HS512", //(default "RS256")
-      // token_endpoint_auth_method (default "client_secret_basic")
-    }); // => Client
+      id_token_signed_response_alg: "HS512", // changed default value
+    }); 
   });
 
 
@@ -45,7 +45,7 @@ server.get("/login", (req, res) => {
     
     const url = client.authorizationUrl({
       scope: 'openid profile email gruppen',
-      resource: 'http://localhost:'+PORT+'/some_other_path',
+      // resource: 'http://localhost:'+PORT+'/some_other_path', not needed for current lemonldap configuration
       code_challenge,
       code_challenge_method: 'S256',
     });
@@ -61,14 +61,14 @@ server.get("/redirect_oidc", (req, res) => {
   console.log( 'code_verifier read out of  session: '+code_verifier );
   const params = client.callbackParams(req);
   console.log( params );
-  client.callback('http://localhost:'+PORT+'/redirect_oidc', params, { code_verifier }) // => Promise
+  client.callback('http://localhost:'+PORT+'/redirect_oidc', params, { code_verifier })
   .then(function (tokenSet) {
     console.log('received and validated tokens %j', tokenSet);
     console.log('validated ID Token claims %j', tokenSet.claims());
     return tokenSet.access_token;
   })
   .then(function(access_token){
-        client.userinfo(access_token) // => Promise
+        client.userinfo(access_token)
         .then(function (userinfo) {
           console.log('userinfo %j', userinfo);
           req.session.userinfo = userinfo;
@@ -77,8 +77,6 @@ server.get("/redirect_oidc", (req, res) => {
         });
   });
 });
-
-
 
 server.get("/after_login", (req, res) => {
   if( req.session.logged_in == true) {
@@ -96,10 +94,6 @@ server.get("/logout", (req, res) => {
   const url = client.endSessionUrl();
   console.log('Logout redirect url: '+ url)
   res.redirect(301, url);
-});
-
-server.get("/testfile", (req, res) => {
-   res.sendFile(__dirname + '/index.html');
 });
 
 server.listen(PORT, () => {
