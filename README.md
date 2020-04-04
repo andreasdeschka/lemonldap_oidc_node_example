@@ -19,7 +19,8 @@ Status of login: http://localhost:4001/after_login
 User name: dhwo, Password: dwho
 
 ### Server:
-Configuration of the lemonldap Server: https://mymanager.lemonldap.localhost:3001/#!/confs/latest
+Configuration of the lemonldap Server: https://mymanager.lemonldap.localhost:3001/
+
 OIDC-Configuration endpoint: https://myportal.lemonldap.localhost:3001/.well-known/openid-configuration
 
 User name: dhwo, Password: dwho
