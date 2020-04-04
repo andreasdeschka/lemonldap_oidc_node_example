@@ -34,7 +34,7 @@ services:
       context: ./node_oidc_client
       dockerfile: dockerfile
     volumes:
-      - ./node_oidc_client/server.js:/app/server.js:ro
+      - ./node_oidc_client/server.js:/app/server.js:ro    
     ports:
       - 4001:4001
     extra_hosts:

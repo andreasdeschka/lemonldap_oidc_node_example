@@ -14,7 +14,6 @@ server.use(session({
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 console.log('123');
 
-//Issuer.discover('https://anmeldung.aesmtk-portal.de/.well-known/openid-configuration') // => Promise
 Issuer.discover('https://myportal.lemonldap.localhost:3001/.well-known/openid-configuration') // => Promise
   .then(function (lemonldapIssuer) {
     console.log('Discovered issuer %s %O', lemonldapIssuer.issuer, lemonldapIssuer.metadata);
