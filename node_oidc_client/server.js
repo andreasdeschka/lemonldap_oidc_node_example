@@ -42,12 +42,21 @@ server.get("/login", (req, res) => {
     console.log( 'code_verifier stored in session: '+code_verifier );
     
     const code_challenge = generators.codeChallenge(code_verifier);
+    const nonce = generators.nonce();
+    req.session.oidc_nonce = nonce;
+    console.log( 'nonce stored in session: '+nonce );
+
+    const state = generators.state();
+    req.session.opidc_state= state;
+    console.log( 'state stored in session: '+state );
     
     const url = client.authorizationUrl({
       scope: 'openid profile email gruppen',
       // resource: 'http://localhost:'+PORT+'/some_other_path', not needed for current lemonldap configuration
       code_challenge,
       code_challenge_method: 'S256',
+      nonce: nonce,
+      state:state
     });
     console.log( 'redirect to '+url  );
     res.redirect(301, url);
@@ -59,9 +68,13 @@ server.get("/login", (req, res) => {
 server.get("/redirect_oidc", (req, res) => {
   const code_verifier = req.session.opidc_code_verifier;
   console.log( 'code_verifier read out of  session: '+code_verifier );
+  const nonce = req.session.oidc_nonce;
+  console.log( 'nonce read out of  session: '+nonce );
+  const state = req.session.opidc_state;
+  console.log( 'state read out of  session: '+state );
   const params = client.callbackParams(req);
   console.log( params );
-  client.callback('http://localhost:'+PORT+'/redirect_oidc', params, { code_verifier })
+  client.callback('http://localhost:'+PORT+'/redirect_oidc', params, { code_verifier, nonce, state })
   .then(function (tokenSet) {
     console.log('received and validated tokens %j', tokenSet);
     console.log('validated ID Token claims %j', tokenSet.claims());
@@ -73,6 +86,9 @@ server.get("/redirect_oidc", (req, res) => {
           console.log('userinfo %j', userinfo);
           req.session.userinfo = userinfo;
           req.session.logged_in = true;
+          delete req.session.opidc_code_verifier;
+          delete req.session.opidc_state;
+          delete req.session.opidc_nonce;
           res.redirect(301, '/after_login');
         });
   });
@@ -88,7 +104,6 @@ server.get("/after_login", (req, res) => {
 
 server.get("/logout", (req, res) => {
   delete req.session.logged_in;
-  delete req.session.opidc_code_verifier;
   delete req.session.userinfo;
   console.log('logout in this server finished');
   const url = client.endSessionUrl();
