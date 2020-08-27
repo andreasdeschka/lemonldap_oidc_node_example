@@ -5,10 +5,18 @@ It is not meant to be used in production. It is only an example for demonstratio
 I copied most of the source code from the [documentation of the open-id client package](https://github.com/panva/node-openid-client).
 
 ## Installation und Start
+Clone repository and run
+
     git clone https://github.com/andreasdeschka/lemonldap_oidc_node_example
     cd lemonldap_oidc_node_example
     docker-compose up -d
     
+Add the following lines to `/etc/hosts`
+
+    127.0.0.1 mymanager.lemonldap.localhost
+    127.0.0.1 myportal.lemonldap.localhost
+    
+
 ## Debugging
 
     docker-compose logs -t lemonldap
